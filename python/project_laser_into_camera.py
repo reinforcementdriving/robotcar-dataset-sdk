@@ -42,8 +42,8 @@ with open(extrinsics_path) as extrinsics_file:
 G_camera_vehicle = build_se3_transform(extrinsics)
 G_camera_posesource = None
 
-poses_type = re.search('(vo|ins)\.csv', args.poses_file).group(1)
-if poses_type == 'ins':
+poses_type = re.search('(vo|ins|rtk)\.csv', args.poses_file).group(1)
+if poses_type in ['ins', 'rtk']:
     with open(os.path.join(args.extrinsics_dir, 'ins.txt')) as extrinsics_file:
         extrinsics = next(extrinsics_file)
         G_camera_posesource = G_camera_vehicle * build_se3_transform([float(x) for x in extrinsics.split(' ')])
@@ -73,7 +73,6 @@ image = load_image(image_path, model)
 uv, depth = model.project(pointcloud, image.shape)
 
 plt.imshow(image)
-plt.hold(True)
 plt.scatter(np.ravel(uv[0, :]), np.ravel(uv[1, :]), s=2, c=depth, edgecolors='none', cmap='jet')
 plt.xlim(0, image.shape[1])
 plt.ylim(image.shape[0], 0)
